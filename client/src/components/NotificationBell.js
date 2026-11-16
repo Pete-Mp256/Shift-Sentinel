@@ -77,9 +77,9 @@ export default function NotificationBell() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative rounded-full" aria-label={`Notifications, ${unread} unread`}>
-          <Bell className="!size-5 text-slate-600" />
+          <Bell className="!size-[18px] text-slate-700 dark:text-neutral-300" />
           {unread > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent-600 px-1 text-[10px] font-semibold text-white ring-2 ring-white">
+            <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent-600 px-1 text-[10px] font-semibold text-white ring-2 ring-white dark:ring-[#1a1a1a]">
               {unread > 9 ? '9+' : unread}
             </span>
           )}
