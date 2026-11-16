@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import api, { apiError } from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { RiskBadge } from '../components/Badges';
+import PageHeader from '../components/PageHeader';
 import PredictionResult from '../components/PredictionResult';
 import RetryPrediction from '../components/RetryPrediction';
 import { NUMERIC_FEATURES } from '../utils/features';
@@ -28,11 +29,11 @@ export default function IncidentDetailPage() {
     return (
       <div className="space-y-3">
         <p className="alert-error" role="alert">{error}</p>
-        <Link to="/shifts" className="text-sm text-accent-700 hover:underline">Back to shifts</Link>
+        <Link to="/shifts" className="link text-sm">Back to shifts</Link>
       </div>
     );
   }
-  if (!data) return <p className="text-sm text-slate-500">Loading incident…</p>;
+  if (!data) return <p className="text-sm text-slate-500 dark:text-neutral-400">Loading incident…</p>;
 
   const { incident, predictions } = data;
   const latest = predictions[0];
@@ -47,20 +48,16 @@ export default function IncidentDetailPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Link to={`/shifts/${incident.shift_id}`} className="link text-sm">← Back to shift</Link>
-        <p className="mt-2 text-xs text-slate-500">
-          {formatDateTime(incident.occurred_at)} · {incident.shift_type} shift · {incident.department_name}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="page-title">{incident.incident_type}</h1>
-          <RiskBadge level={latest?.final_risk_level} confidence={latest?.confidence} />
-        </div>
-        <p className="mt-1 text-sm text-slate-600">{incident.description}</p>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        back={<Link to={`/shifts/${incident.shift_id}`} className="link text-sm">← Back to shift</Link>}
+        eyebrow={`${formatDateTime(incident.occurred_at)} · ${incident.shift_type} shift · ${incident.department_name}`}
+        title={incident.incident_type}
+        badge={<RiskBadge level={latest?.final_risk_level} confidence={latest?.confidence} size="lg" />}
+        subtitle={incident.description}
+      />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <section className="card">
           <h2 className="section-title">Risk prediction</h2>
           <div className="mt-3">
@@ -77,17 +74,17 @@ export default function IncidentDetailPage() {
           <dl className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-1.5 text-sm">
             {details.map(([label, value]) => (
               <div key={label} className="contents">
-                <dt className="text-slate-500">{label}</dt>
+                <dt className="text-slate-500 dark:text-neutral-400">{label}</dt>
                 <dd>{value}</dd>
               </div>
             ))}
           </dl>
           <div>
-            <h3 className="text-sm font-semibold text-slate-700">Model readings</h3>
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-neutral-300">Model readings</h3>
             <dl className="mt-1.5 grid grid-cols-[auto,1fr] gap-x-4 gap-y-1.5 text-sm">
               {NUMERIC_FEATURES.map((f) => (
                 <div key={f.name} className="contents">
-                  <dt className="text-slate-500">{f.label}</dt>
+                  <dt className="text-slate-500 dark:text-neutral-400">{f.label}</dt>
                   <dd className="tabular-nums">{incident[f.name]} {f.unit !== '0–1' && f.unit}</dd>
                 </div>
               ))}
@@ -101,7 +98,7 @@ export default function IncidentDetailPage() {
           <h2 className="section-title">Prediction history</h2>
           <div className="mt-3 overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="text-left text-xs uppercase tracking-wide text-slate-500">
+              <thead className="text-left text-xs uppercase tracking-wide text-slate-500 dark:text-neutral-400">
                 <tr>
                   <th className="py-2 pr-4">When</th>
                   <th className="py-2 pr-4">Risk</th>
@@ -112,7 +109,7 @@ export default function IncidentDetailPage() {
                   <th className="py-2 text-right">Response</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-black/5 dark:divide-white/10">
                 {predictions.map((p) => (
                   <tr key={p.prediction_id}>
                     <td className="py-2 pr-4">{formatDateTime(p.created_at)}</td>

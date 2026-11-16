@@ -36,7 +36,7 @@ export default function HandoverDetailPage() {
         <p className="alert-error" role="alert">{error}</p>
         <Link to="/handovers" className="link text-sm">Back to handovers</Link>
       </div>
-    ) : <p className="text-sm text-slate-500">Loading handover…</p>;
+    ) : <p className="text-sm text-slate-500 dark:text-neutral-400">Loading handover…</p>;
   }
 
   const { handover, items } = data;
@@ -76,7 +76,7 @@ export default function HandoverDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         back={<Link to="/handovers" className="link mb-2 inline-block text-sm">← All handovers</Link>}
         eyebrow={`${formatDate(handover.shift_date)} · ${handover.department_name}`}
@@ -89,7 +89,7 @@ export default function HandoverDetailPage() {
             </span>
             <HandoverStatusBadge status={handover.status} />
             {handover.overall_risk && (
-              <span className="flex items-center gap-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-neutral-400">
                 Handover risk <RiskBadge level={handover.overall_risk} />
               </span>
             )}
@@ -102,7 +102,7 @@ export default function HandoverDetailPage() {
 
       {handover.status === 'Draft' ? (
         <section className="card space-y-2">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-neutral-400">
             {isSender
               ? 'This handover is still a draft. Finish and submit it from the shift page.'
               : `${handover.from_manager_name} is still preparing this handover.`}
@@ -110,35 +110,35 @@ export default function HandoverDetailPage() {
           {isSender && <Link to={`/shifts/${handover.shift_id}`} className="link text-sm">Go to the shift</Link>}
         </section>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           <section className="card min-w-0 lg:col-span-2">
             <h2 className="section-title mb-4">
               Items{' '}
-              {canAcknowledge && <span className="text-sm font-normal text-slate-500">({remaining} to tick)</span>}
+              {canAcknowledge && <span className="text-sm font-normal text-slate-500 dark:text-neutral-400">({remaining} to tick)</span>}
             </h2>
             <HandoverItems items={items} onAcknowledge={canAcknowledge ? acknowledgeItem : undefined} busyId={busyId} />
           </section>
 
-          <aside className="min-w-0 space-y-6">
+          <aside className="min-w-0 space-y-4">
             <section className="card space-y-2">
               <h2 className="section-title">Summary</h2>
-              <p className="whitespace-pre-line text-sm text-slate-700">{handover.summary}</p>
-              <p className="text-xs text-slate-500">Submitted {formatDateTime(handover.submitted_at)}</p>
+              <p className="whitespace-pre-line text-sm text-slate-700 dark:text-neutral-300">{handover.summary}</p>
+              <p className="text-xs text-slate-500 dark:text-neutral-400">Submitted {formatDateTime(handover.submitted_at)}</p>
             </section>
 
             <section className="card space-y-3">
               <h2 className="section-title">Acknowledgement</h2>
               {handover.status === 'Acknowledged' ? (
-                <p className="text-sm text-slate-700">Acknowledged {formatDateTime(handover.acknowledged_at)}.</p>
+                <p className="text-sm text-slate-700 dark:text-neutral-300">Acknowledged {formatDateTime(handover.acknowledged_at)}.</p>
               ) : canAcknowledge ? (
                 <>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-neutral-400">
                     {remaining > 0
                       ? `${remaining} item${remaining === 1 ? '' : 's'} not ticked yet. Acknowledging also ticks them.`
                       : 'All items ticked.'}
                   </p>
                   {highUnticked > 0 && (
-                    <p className="text-sm font-medium text-risk-high-ink" role="status">
+                    <p className="text-sm font-medium text-risk-high-ink dark:text-orange-400" role="status">
                       Tick the {highUnticked} High risk item{highUnticked === 1 ? '' : 's'} first.
                     </p>
                   )}
@@ -147,7 +147,7 @@ export default function HandoverDetailPage() {
                   </button>
                 </>
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-neutral-400">
                   {isSender ? 'Waiting for the incoming person to acknowledge.' : 'Only the incoming person or their department can acknowledge.'}
                 </p>
               )}

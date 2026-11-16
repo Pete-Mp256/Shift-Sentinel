@@ -13,7 +13,7 @@ const EMPTY_FILTERS = { date: '', department_id: '' };
 function ShiftRow({ shift }) {
   return (
     <li className="tile flex items-center gap-3 sm:gap-4">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-600 text-white">
         <ShiftIcon type={shift.shift_type} />
       </span>
       <div className="min-w-0 flex-1 sm:w-28 sm:flex-none">
@@ -21,26 +21,26 @@ function ShiftRow({ shift }) {
           {formatTime(shift.start_time)}
           <span className="sm:hidden"> – {formatTime(shift.end_time)}</span>
         </p>
-        <p className="truncate text-xs text-slate-500">{shift.shift_type} · {shift.staff_count} staff</p>
-        <p className="truncate text-xs text-slate-500 sm:hidden">{shift.department_name} · {shift.manager_name}</p>
+        <p className="truncate text-xs text-slate-500 dark:text-neutral-400">{shift.shift_type} · {shift.staff_count} staff</p>
+        <p className="truncate text-xs text-slate-500 dark:text-neutral-400 sm:hidden">{shift.department_name} · {shift.manager_name}</p>
       </div>
-      <div className="hidden min-w-[8rem] flex-1 flex-col items-center text-xs text-slate-500 sm:flex">
+      <div className="hidden min-w-[8rem] flex-1 flex-col items-center text-xs text-slate-500 dark:text-neutral-400 sm:flex">
         <span>{formatDuration(shift.start_time, shift.end_time)}</span>
         <span className="my-1 flex w-full items-center gap-1 text-accent-400">
-          <span className="h-2 w-2 rounded-full border-2 border-accent-300" />
-          <span className="h-px flex-1 border-t border-dashed border-accent-300" />
+          <span className="h-2 w-2 rounded-full border-2 border-accent-300 dark:border-accent-700" />
+          <span className="h-px flex-1 border-t border-dashed border-accent-300 dark:border-accent-700" />
           <PlaneIcon className="h-4 w-4 rotate-45" />
         </span>
         <span className="truncate">{shift.manager_name}</span>
       </div>
       <div className="hidden w-36 shrink-0 sm:block">
         <p className="text-sm font-semibold tabular-nums">{formatTime(shift.end_time)}</p>
-        <p className="truncate text-xs text-slate-500">{shift.department_name}</p>
+        <p className="truncate text-xs text-slate-500 dark:text-neutral-400">{shift.department_name}</p>
       </div>
       <div className="ml-auto flex shrink-0 flex-col items-end gap-1.5">
         <p className="text-right">
           <span className="text-xl font-semibold tabular-nums">{shift.open_task_count}</span>
-          <span className="text-xs text-slate-500"> / {shift.task_count}<span className="hidden sm:inline"> open tasks</span></span>
+          <span className="text-xs text-slate-500 dark:text-neutral-400"> / {shift.task_count}<span className="hidden sm:inline"> open tasks</span></span>
         </p>
         <Link to={`/shifts/${shift.shift_id}`} className="btn-dark px-4 py-1 text-xs"
           aria-label={`Open ${shift.shift_type} shift on ${formatDate(shift.shift_date)}`}>
@@ -105,7 +105,7 @@ export default function ShiftsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Shift handovers"
-        plane
+        subtitle="Open a shift to log incidents, update tasks and hand over to the next person on duty."
         actions={!creating && (
           <button type="button" className="btn-dark" onClick={() => setCreating(true)}>New shift</button>
         )}
@@ -120,16 +120,16 @@ export default function ShiftsPage() {
       )}
 
       <form onSubmit={search}
-        className="flex flex-wrap items-end gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/70 sm:flex-nowrap sm:px-6">
+        className="card flex flex-wrap items-end gap-4 sm:flex-nowrap">
         <div className="w-full sm:w-auto sm:flex-1">
           <label htmlFor="filter-date" className="label">Date</label>
-          <input id="filter-date" type="date" className="input border-transparent bg-slate-50 font-medium"
+          <input id="filter-date" type="date" className="input input-soft h-11 text-sm font-medium"
             value={draft.date} onChange={(e) => setDraft((d) => ({ ...d, date: e.target.value }))} />
         </div>
-        <span className="hidden h-10 w-px bg-slate-200 sm:block" aria-hidden="true" />
+        <span className="hidden h-10 w-px bg-black/10 sm:block dark:bg-white/10" aria-hidden="true" />
         <div className="w-full sm:w-auto sm:flex-1">
           <label htmlFor="filter-dept" className="label">Department</label>
-          <select id="filter-dept" className="input border-transparent bg-slate-50 font-medium"
+          <select id="filter-dept" className="input input-soft h-11 text-sm font-medium"
             value={draft.department_id} onChange={(e) => setDraft((d) => ({ ...d, department_id: e.target.value }))}>
             <option value="">All departments</option>
             {departments.map((d) => <option key={d.department_id} value={d.department_id}>{d.name}</option>)}
@@ -140,14 +140,14 @@ export default function ShiftsPage() {
             <button type="button" className="btn-secondary"
               onClick={() => { setDraft(EMPTY_FILTERS); setFilters(EMPTY_FILTERS); }}>Clear</button>
           )}
-          <button type="submit" className="btn-primary"><SearchIcon className="h-4 w-4" />Search</button>
+          <button type="submit" className="btn-primary h-11"><SearchIcon className="h-4 w-4" />Search</button>
         </div>
       </form>
 
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Shift type">
+      <div className="segmented w-fit" role="tablist" aria-label="Shift type">
         {['All', ...SHIFT_TYPES].map((t) => (
           <button key={t} type="button" role="tab" aria-selected={shiftType === t}
-            className={shiftType === t ? 'pill-active' : 'pill bg-white ring-1 ring-slate-200'}
+            className={shiftType === t ? 'pill-active' : 'pill'}
             onClick={() => setShiftType(t)}>
             {t}
           </button>
@@ -156,12 +156,12 @@ export default function ShiftsPage() {
 
       {error && <p className="alert-error" role="alert">{error}</p>}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3">
         <section className="card min-w-0 lg:col-span-2" aria-label="Shifts">
           {loading ? (
-            <p className="py-6 text-center text-sm text-slate-500">Loading shifts…</p>
+            <p className="py-6 text-center text-sm text-slate-500 dark:text-neutral-400">Loading shifts…</p>
           ) : groups.length === 0 ? (
-            <p className="py-6 text-center text-sm text-slate-500">No shifts found.</p>
+            <p className="py-6 text-center text-sm text-slate-500 dark:text-neutral-400">No shifts found.</p>
           ) : (
             <div className="space-y-5">
               {groups.map(([date, list]) => (

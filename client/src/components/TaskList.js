@@ -119,7 +119,7 @@ export default function TaskList({ shiftId, tasks, canEdit, onChange }) {
     <section className="card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="section-title">
-          Tasks <span className="text-sm font-normal normal-case tracking-normal text-slate-500">({openCount} open of {tasks.length})</span>
+          Tasks <span className="text-sm font-normal normal-case tracking-normal text-slate-500 dark:text-neutral-400">({openCount} open of {tasks.length})</span>
         </h2>
         {canEdit && !adding && (
           <button type="button" className="btn-secondary px-3 py-1.5" onClick={() => setAdding(true)}>Add task</button>
@@ -128,18 +128,18 @@ export default function TaskList({ shiftId, tasks, canEdit, onChange }) {
       {error && <p className="alert-error mt-3" role="alert">{error}</p>}
 
       {tasks.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-500">No tasks on this shift.</p>
+        <p className="mt-3 text-sm text-slate-500 dark:text-neutral-400">No tasks on this shift.</p>
       ) : (
         <ul className="mt-3 space-y-2">
           {tasks.map((t) => (
             <li key={t.task_id} className="tile flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{t.title}</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-neutral-400">
                   {[t.aircraft_reg, t.task_type, t.complexity && `complexity ${t.complexity}`,
                     t.estimated_hours != null && `${t.estimated_hours} h`].filter(Boolean).join(' · ')}
                 </p>
-                {t.description && <p className="mt-1 text-sm text-slate-600">{t.description}</p>}
+                {t.description && <p className="mt-1 text-sm text-slate-600 dark:text-neutral-400">{t.description}</p>}
               </div>
               {canEdit ? (
                 <select

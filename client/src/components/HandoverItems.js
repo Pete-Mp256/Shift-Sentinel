@@ -15,10 +15,10 @@ function ItemBody({ item }) {
     return (
       <div className="min-w-0 flex-1">
         <p className="font-medium">{item.task_title}</p>
-        <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-neutral-400">
           {item.aircraft_reg && <span>{item.aircraft_reg}</span>}
           <StatusBadge status={item.task_status} />
-          {item.carried_over && <span className="font-medium text-accent-700">Carried over</span>}
+          {item.carried_over && <span className="font-medium text-accent-700 dark:text-accent-400">Carried over</span>}
         </p>
       </div>
     );
@@ -28,22 +28,22 @@ function ItemBody({ item }) {
     return (
       <div className="min-w-0 flex-1 space-y-1">
         <Link to={`/incidents/${item.incident_id}`} className="link">{item.incident_type}</Link>
-        <p className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <p className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-neutral-400">
           <span>{formatDateTime(item.occurred_at)}</span>
           <RiskBadge level={item.final_risk_level} />
         </p>
-        <RatingChange prediction={item} className="text-xs text-slate-600" />
+        <RatingChange prediction={item} className="text-xs text-slate-600 dark:text-neutral-400" />
         {factors.length > 0 && (
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-slate-600 dark:text-neutral-400">
             <span className="font-medium">Top factors:</span>{' '}
             {factors.map((f) => `${describeFeature(f.feature, f.value)} ${f.effect === 'raises' ? '↑' : '↓'}`).join(' · ')}
           </p>
         )}
-        <FlagList flags={item.handover_flags} className="list-disc space-y-0.5 pl-4 text-xs text-slate-600" />
+        <FlagList flags={item.handover_flags} className="list-disc space-y-0.5 pl-4 text-xs text-slate-600 dark:text-neutral-400" />
       </div>
     );
   }
-  return <p className="min-w-0 flex-1 whitespace-pre-line text-sm text-slate-700">{item.note}</p>;
+  return <p className="min-w-0 flex-1 whitespace-pre-line text-sm text-slate-700 dark:text-neutral-300">{item.note}</p>;
 }
 
 // A handover's items grouped as open tasks, incidents and notes.
@@ -58,7 +58,7 @@ export default function HandoverItems({ items, onRemove, onAcknowledge, busyId }
           <div key={type}>
             <h3 className="label mb-2">{heading} ({group.length})</h3>
             {group.length === 0 ? (
-              <p className="text-sm text-slate-500">{empty}</p>
+              <p className="text-sm text-slate-500 dark:text-neutral-400">{empty}</p>
             ) : (
               <ul className="space-y-2">
                 {group.map((item) => {
@@ -77,10 +77,10 @@ export default function HandoverItems({ items, onRemove, onAcknowledge, busyId }
                       )}
                       <ItemBody item={item} />
                       {acked && !onAcknowledge && (
-                        <span className="shrink-0 text-xs font-medium text-risk-low-ink">Acknowledged</span>
+                        <span className="shrink-0 text-xs font-medium text-risk-low-ink dark:text-emerald-300">Acknowledged</span>
                       )}
                       {onRemove && type === 'Note' && (
-                        <button type="button" className="shrink-0 text-xs font-medium text-slate-500 hover:text-accent-700"
+                        <button type="button" className="shrink-0 text-xs font-medium text-slate-500 dark:text-neutral-400 hover:text-accent-700"
                           disabled={busyId === item.item_id} onClick={() => onRemove(item)}>
                           Remove
                         </button>

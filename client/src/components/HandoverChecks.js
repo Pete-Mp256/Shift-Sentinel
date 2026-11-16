@@ -2,7 +2,7 @@
 // final_risk_level the rating after the checks, handover_flags the checks that fired.
 
 // "Model: Medium → Final: High (weak handover)".
-export function RatingChange({ prediction, className = 'text-sm text-slate-600' }) {
+export function RatingChange({ prediction, className = 'text-sm text-slate-600 dark:text-neutral-400' }) {
   if (!prediction.risk_level) return null;
   const finalLevel = prediction.final_risk_level || prediction.risk_level;
   const raised = finalLevel !== prediction.risk_level;
@@ -10,14 +10,14 @@ export function RatingChange({ prediction, className = 'text-sm text-slate-600' 
   return (
     <p className={className}>
       Model: <span className="font-medium">{prediction.risk_level}</span> → Final:{' '}
-      <span className={raised ? 'font-semibold text-risk-high-ink' : 'font-medium'}>{finalLevel}</span>
+      <span className={raised ? 'font-semibold text-risk-high-ink dark:text-orange-400' : 'font-medium'}>{finalLevel}</span>
       {note && ` (${note})`}
     </p>
   );
 }
 
 // The handover checks that fired, in plain words.
-export function FlagList({ flags, className = 'list-disc space-y-1 pl-5 text-sm text-slate-700' }) {
+export function FlagList({ flags, className = 'list-disc space-y-1 pl-5 text-sm text-slate-700 dark:text-neutral-300' }) {
   if (!flags || flags.length === 0) return null;
   return (
     <ul className={className}>
