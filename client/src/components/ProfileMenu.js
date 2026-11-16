@@ -24,12 +24,12 @@ export default function ProfileMenu({ variant = 'compact' }) {
     variant === 'full' ? (
       <button
         type="button"
-        className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-slate-100"
+        className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-slate-100 dark:hover:bg-white/10 dark:data-[state=open]:bg-white/10"
       >
         <Avatar><AvatarFallback>{initials(manager)}</AvatarFallback></Avatar>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-ink">{name}</span>
-          <span className="block truncate text-xs text-slate-500">{manager.email}</span>
+          <span className="block truncate text-sm font-medium text-ink dark:text-white">{name}</span>
+          <span className="block truncate text-xs text-slate-500 dark:text-neutral-400">{manager.email}</span>
         </span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 text-slate-400" />
       </button>
@@ -48,7 +48,7 @@ export default function ProfileMenu({ variant = 'compact' }) {
         className="w-60"
       >
         <DropdownMenuLabel className="font-normal">
-          <p className="text-sm font-medium text-ink">{name}</p>
+          <p className="text-sm font-medium text-ink dark:text-white">{name}</p>
           <p className="mt-0.5 flex items-center gap-1.5 truncate text-xs text-slate-500">
             <Mail className="h-3 w-3" />{manager.email}
           </p>

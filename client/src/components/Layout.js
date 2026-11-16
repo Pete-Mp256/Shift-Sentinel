@@ -3,11 +3,11 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { CalendarClock, ChevronRight, ClipboardCheck, LayoutDashboard, Menu } from 'lucide-react';
 import api from '../api';
 import { cn } from 'lib/utils';
-import { Button } from 'components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from 'components/ui/sheet';
 import Logo from './Logo';
 import NotificationBell from './NotificationBell';
 import ProfileMenu from './ProfileMenu';
+import ThemeToggle from './ThemeToggle';
 
 const NAV = [
   { to: '/shifts', label: 'Shifts', icon: CalendarClock, hint: 'Tasks, incidents and handover' },
@@ -25,10 +25,11 @@ function crumbsFor(pathname) {
 }
 
 // counts: { [path]: number } shown as a badge, e.g. handovers waiting for acknowledgement.
+// Pill links in the Rare UI style: the active page is a raised white pill with a crimson icon.
 function NavItems({ counts = {} }) {
   return (
     <nav className="flex flex-col gap-1" aria-label="Main">
-      <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Workspace</p>
+      <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-neutral-500">Workspace</p>
       {NAV.map(({ to, label, icon: Icon, hint }) => {
         return (
           <NavLink
@@ -36,19 +37,26 @@ function NavItems({ counts = {} }) {
             to={to}
             className={({ isActive }) =>
               cn(
-                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors',
+                'group flex items-center gap-3 rounded-full py-1.5 pl-1.5 pr-3 text-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500',
                 isActive
-                  ? 'bg-accent-50 font-medium text-accent-800 before:absolute before:inset-y-2 before:left-0 before:w-1 before:rounded-full before:bg-accent-600'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-ink'
+                  ? 'bg-white font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5 dark:bg-white/10 dark:text-white dark:shadow-none dark:ring-white/10'
+                  : 'text-slate-600 hover:bg-white/60 hover:text-ink dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white'
               )
             }
           >
             {({ isActive }) => (
               <>
-                <Icon className={cn('h-[18px] w-[18px]', isActive ? 'text-accent-600' : 'text-slate-400 group-hover:text-slate-600')} />
-                <span className="flex flex-col leading-tight">
+                <span className={cn(
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors',
+                  isActive
+                    ? 'bg-accent-600 text-white'
+                    : 'bg-white/70 text-slate-500 ring-1 ring-black/5 group-hover:text-ink dark:bg-white/5 dark:text-neutral-400 dark:ring-white/10 dark:group-hover:text-white'
+                )}>
+                  <Icon className="h-[17px] w-[17px]" />
+                </span>
+                <span className="flex min-w-0 flex-col leading-tight">
                   {label}
-                  <span className="text-[11px] font-normal text-slate-400">{hint}</span>
+                  <span className="truncate text-[11px] font-normal text-slate-400 dark:text-neutral-500">{hint}</span>
                 </span>
                 {counts[to] > 0 && (
                   <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-accent-600 px-1.5 text-[11px] font-semibold text-white"
@@ -68,15 +76,19 @@ function NavItems({ counts = {} }) {
 function SidebarBody({ counts }) {
   return (
     <>
-      <div className="livery" aria-hidden="true" />
-      <div className="px-5 pb-4 pt-5">
-        <Link to="/shifts" aria-label="Incident Risk home"><Logo /></Link>
+      <div className="px-5 pb-6 pt-5">
+        <Link to="/shifts" aria-label="Incident Risk home"
+          className="inline-flex rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500">
+          <Logo />
+        </Link>
       </div>
       <div className="flex-1 overflow-y-auto px-3 py-2">
         <NavItems counts={counts} />
       </div>
-      <div className="border-t p-3">
-        <ProfileMenu variant="full" />
+      <div className="p-3">
+        <div className="rounded-2xl bg-white p-1 ring-1 ring-black/5 dark:bg-white/5 dark:ring-white/10">
+          <ProfileMenu variant="full" />
+        </div>
       </div>
     </>
   );
@@ -106,52 +118,58 @@ export default function Layout() {
   const counts = { '/handovers': waiting };
 
   return (
-    <div className="min-h-screen bg-white lg:grid lg:grid-cols-[264px_1fr]">
-      <aside className="sticky top-0 hidden h-screen flex-col border-r bg-slate-50/70 lg:flex">
+    <div className="min-h-screen bg-white p-2 sm:p-3 lg:grid lg:grid-cols-[272px_1fr] lg:gap-3 dark:bg-black">
+      {/* Sidebar: a framed grey panel, like the landing page hero. */}
+      <aside className="panel sticky top-3 hidden h-[calc(100vh-1.5rem)] flex-col lg:flex">
         <SidebarBody counts={counts} />
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-white/85 px-4 backdrop-blur supports-[backdrop-filter]:bg-white/70 sm:px-6 lg:px-8">
+        {/* Floating pills, like the public navbar. */}
+        <header className="sticky top-2 z-30 flex items-center gap-2 sm:top-3">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="-ml-2 lg:hidden" aria-label="Open menu">
-                <Menu className="!size-5" />
-              </Button>
+              <button type="button" aria-label="Open menu"
+                className="nav-pill w-11 justify-center px-0 text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 lg:hidden dark:text-neutral-300">
+                <Menu className="h-5 w-5" />
+              </button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
+            <SheetContent side="left" className="flex flex-col bg-[#f4f4f6] p-0 dark:bg-[#141414]">
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <SheetDescription className="sr-only">Main navigation</SheetDescription>
               <SidebarBody counts={counts} />
             </SheetContent>
           </Sheet>
 
-          <Link to="/shifts" className="lg:hidden" aria-label="Incident Risk home"><Logo /></Link>
+          <Link to="/shifts" className="nav-pill pl-1.5 pr-4 lg:hidden" aria-label="Incident Risk home"><Logo /></Link>
 
-          <ol className="hidden items-center gap-1.5 text-sm lg:flex" aria-label="Breadcrumb">
+          <ol className="nav-pill hidden gap-1.5 px-4 text-sm lg:flex" aria-label="Breadcrumb">
             {crumbs.map((c, i) => (
               <Fragment key={c.label}>
-                {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden="true" />}
+                {i > 0 && <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-neutral-600" aria-hidden="true" />}
                 <li>
                   {c.to ? (
-                    <Link to={c.to} className="text-slate-500 transition-colors hover:text-ink">{c.label}</Link>
+                    <Link to={c.to} className="text-slate-500 transition-colors hover:text-ink dark:text-neutral-400 dark:hover:text-white">{c.label}</Link>
                   ) : (
-                    <span className="font-medium text-ink" aria-current="page">{c.label}</span>
+                    <span className="font-medium text-ink dark:text-white" aria-current="page">{c.label}</span>
                   )}
                 </li>
               </Fragment>
             ))}
           </ol>
 
-          <div className="ml-auto flex items-center gap-1.5">
-            <NotificationBell />
-            <div className="lg:hidden">
-              <ProfileMenu />
+          <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
+            <div className="nav-pill gap-1 px-1">
+              <NotificationBell />
+              <div className="lg:hidden">
+                <ProfileMenu />
+              </div>
             </div>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-1 pb-10 pt-6 sm:px-3 lg:px-5 lg:pt-8">
           <Outlet />
         </main>
       </div>

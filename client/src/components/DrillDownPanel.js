@@ -10,10 +10,10 @@ function IncidentRow({ incident: i }) {
   return (
     <li>
       <Link to={`/incidents/${i.incident_id}`}
-        className="tile flex flex-wrap items-center justify-between gap-3 transition hover:ring-accent-300">
+        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#f4f4f6] px-4 py-3 ring-1 ring-black/5 transition hover:bg-white hover:ring-accent-300 dark:bg-white/5 dark:ring-white/10 dark:hover:bg-white/10">
         <div className="min-w-0 flex-1">
-          <p className="font-medium">{i.incident_type}</p>
-          <p className="text-xs text-slate-500">
+          <p className="font-medium text-ink dark:text-white">{i.incident_type}</p>
+          <p className="text-xs text-slate-500 dark:text-neutral-400">
             {formatDateTime(i.occurred_at)} · {i.shift_type} shift · {i.department_name}
           </p>
         </div>
@@ -28,13 +28,13 @@ function TaskRow({ task: t }) {
   return (
     <li>
       <Link to={`/shifts/${t.shift_id}`}
-        className="tile flex flex-wrap items-center justify-between gap-3 transition hover:ring-accent-300">
+        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#f4f4f6] px-4 py-3 ring-1 ring-black/5 transition hover:bg-white hover:ring-accent-300 dark:bg-white/5 dark:ring-white/10 dark:hover:bg-white/10">
         <div className="min-w-0 flex-1">
-          <p className="font-medium">
+          <p className="font-medium text-ink dark:text-white">
             {t.title}
-            {t.aircraft_reg && <span className="font-normal text-slate-500"> · {t.aircraft_reg}</span>}
+            {t.aircraft_reg && <span className="font-normal text-slate-500 dark:text-neutral-400"> · {t.aircraft_reg}</span>}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-neutral-400">
             {formatDate(t.shift_date)} · {t.shift_type} shift · {t.department_name}
           </p>
         </div>
@@ -71,12 +71,12 @@ export default function DrillDownPanel({ selection, days, onClose }) {
   const noun = selection.kind === 'tasks' ? 'open tasks' : 'incidents';
 
   return (
-    <section ref={ref} className="card scroll-mt-4" aria-label={`Showing ${selection.label}`} aria-busy={loading}>
+    <section ref={ref} className="bento scroll-mt-24 p-5 sm:p-6" aria-label={`Showing ${selection.label}`} aria-busy={loading}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="section-title">
-          Showing: <span className="normal-case tracking-normal text-slate-900">{selection.label}</span>
+        <h2 className="text-lg font-semibold tracking-tight text-ink dark:text-white">
+          <span className="font-normal text-slate-500 dark:text-neutral-400">Showing:</span> {selection.label}
           {!loading && !error && (
-            <span className="ml-1 text-sm font-normal normal-case tracking-normal text-slate-500">({items.length})</span>
+            <span className="ml-1 text-sm font-normal text-slate-500 dark:text-neutral-400">({items.length})</span>
           )}
         </h2>
         <button type="button" className="btn-secondary px-4 py-1 text-xs" onClick={onClose}>Close</button>
@@ -85,9 +85,9 @@ export default function DrillDownPanel({ selection, days, onClose }) {
       {error ? (
         <p className="alert-error" role="alert">{error}</p>
       ) : loading ? (
-        <p className="py-4 text-center text-sm text-slate-500">Loading {noun}…</p>
+        <p className="py-4 text-center text-sm text-slate-500 dark:text-neutral-400">Loading {noun}…</p>
       ) : items.length === 0 ? (
-        <p className="py-4 text-center text-sm text-slate-500">No {noun} in the last {days} days.</p>
+        <p className="py-4 text-center text-sm text-slate-500 dark:text-neutral-400">No {noun} in the last {days} days.</p>
       ) : (
         <>
           <ul className="max-h-[28rem] space-y-2 overflow-auto">
@@ -96,7 +96,7 @@ export default function DrillDownPanel({ selection, days, onClose }) {
               : items.map((i) => <IncidentRow key={i.incident_id} incident={i} />)}
           </ul>
           {items.length >= LIST_LIMIT && (
-            <p className="mt-2 text-xs text-slate-500">Showing the latest {LIST_LIMIT}.</p>
+            <p className="mt-2 text-xs text-slate-500 dark:text-neutral-400">Showing the latest {LIST_LIMIT}.</p>
           )}
         </>
       )}

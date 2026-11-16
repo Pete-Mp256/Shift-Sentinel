@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import api, { apiError } from '../api';
 import DrillDownPanel from '../components/DrillDownPanel';
-import PageHeader from '../components/PageHeader';
+import { PlaneIcon } from '../components/Icons';
 import {
   ChartCard, RISK_COLORS, RiskDonut, RiskTable, StackedRiskBars,
 } from '../components/RiskCharts';
 import Timeline from '../components/Timeline';
+import { Skeleton } from 'components/ui/skeleton';
 import { formatDate, formatDateTime, formatShortDate } from '../utils/format';
 
 const RANGES = [7, 30, 90];
@@ -35,23 +36,50 @@ function incidentSelection(risk, row = {}) {
 
 const OPEN_TASKS = { kind: 'tasks', id: 'tasks', filters: {}, label: 'Open tasks' };
 
-// A number tile; clicking it lists what was counted. note: optional extra count with its own action.
-function StatTile({ label, value, color, onSelect, selected, note, className = '' }) {
+// A number in a bento card; clicking it lists what was counted. note: optional line under the number
+// (it may hold its own button). dark: the black card with the crimson glow, used for the total.
+function StatTile({ label, value, color, onSelect, selected, note, dark = false, className = '' }) {
   const clickable = onSelect && value > 0;
   return (
-    <div className={`tile relative transition ${clickable ? 'hover:ring-accent-300' : ''}
-      ${selected ? 'ring-2 ring-slate-900 hover:ring-slate-900' : ''} ${className}`}>
+    <div className={`bento min-h-[8.5rem] p-5 transition-all duration-300
+      ${dark ? 'bg-black text-white ring-0 dark:bg-[#0b0b0b] dark:ring-1' : ''}
+      ${clickable ? 'hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)]' : ''}
+      ${selected ? (dark ? 'ring-2 ring-accent-500 dark:ring-2' : 'ring-2 ring-ink dark:ring-white') : ''} ${className}`}>
+      {dark && (
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-16 -right-10 h-40 w-48 rounded-full bg-accent-600/60 blur-[60px]" />
+      )}
       {clickable && (
         <button type="button" onClick={onSelect} aria-pressed={selected}
           aria-label={`List ${value} ${label.toLowerCase()}`}
-          className="absolute inset-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400" />
+          className="absolute inset-0 z-10 rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-500" />
       )}
-      <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-        {color && <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} aria-hidden="true" />}
+      <p className={`relative flex items-center gap-2 text-sm font-medium ${dark ? 'text-white/70' : 'text-slate-500 dark:text-neutral-400'}`}>
+        {color && <span className="h-2.5 w-2.5 rounded-full" style={{ background: color }} aria-hidden="true" />}
         {label}
       </p>
-      <p className="mt-1 text-3xl font-light tabular-nums text-slate-900">{value}</p>
-      {note}
+      <p className={`relative mt-auto pt-4 text-5xl font-bold tabular-nums tracking-[-0.04em] ${dark ? 'text-white' : 'text-ink dark:text-white'}`}>
+        {value}
+      </p>
+      {note && <div className={`relative mt-1 text-xs ${dark ? 'text-white/60' : 'text-slate-500 dark:text-neutral-400'}`}>{note}</div>}
+    </div>
+  );
+}
+
+// Share of predicted incidents, shown under each risk tile.
+function share(count, totals) {
+  const predicted = totals.Low + totals.Medium + totals.High;
+  return predicted ? `${Math.round((count / predicted) * 100)}% of predicted` : 'None predicted';
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-4" aria-hidden="true">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className={`h-[8.5rem] rounded-3xl dark:bg-white/10 ${i === 0 ? 'col-span-2 sm:col-span-1' : ''}`} />
+        ))}
+      </div>
+      <Skeleton className="h-80 rounded-3xl dark:bg-white/10" />
     </div>
   );
 }
@@ -83,12 +111,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Dashboard"
-        subtitle={summary && `Incidents from ${formatDate(summary.from)} to ${formatDate(summary.to)}, counted by their latest risk prediction.`}
-        actions={(
-          <div className="flex gap-1 rounded-full bg-white p-1 ring-1 ring-slate-200" role="tablist" aria-label="Time range">
+    <div className="space-y-4">
+      {/* Hero: framed panel with the title and the time range, like the landing page. */}
+      <section className="panel px-6 py-8 sm:px-10 sm:py-10">
+        <PlaneIcon aria-hidden="true" strokeWidth="0.6"
+          className="pointer-events-none absolute -right-16 -top-10 h-80 w-80 -rotate-12 text-black/[0.04] dark:text-white/[0.05]" />
+        <div className="relative flex flex-wrap items-end justify-between gap-6">
+          <div className="min-w-0">
+            <span className="eyebrow">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-600" /> Risk overview · last {days} days
+            </span>
+            <h1 className="mt-4 text-5xl font-extrabold leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl dark:text-white">
+              Dashboard
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500 sm:text-base dark:text-neutral-400">
+              {summary
+                ? `Incidents from ${formatDate(summary.from)} to ${formatDate(summary.to)}, counted by their latest risk prediction. Click any number to see what's behind it.`
+                : 'Incidents counted by their latest risk prediction.'}
+            </p>
+          </div>
+          <div className="nav-pill gap-0.5 px-1" role="tablist" aria-label="Time range">
             {RANGES.map((d) => (
               <button key={d} type="button" role="tab" aria-selected={days === d}
                 className={days === d ? 'pill-active' : 'pill'} onClick={() => setDays(d)}>
@@ -96,39 +138,45 @@ export default function DashboardPage() {
               </button>
             ))}
           </div>
-        )}
-      />
+        </div>
+      </section>
 
       {error && <p className="alert-error" role="alert">{error}</p>}
 
       {!summary ? (
-        !error && <p className="py-6 text-center text-sm text-slate-500">Loading dashboard…</p>
+        !error && (
+          <div role="status">
+            <span className="sr-only">Loading dashboard…</span>
+            <DashboardSkeleton />
+          </div>
+        )
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            <StatTile label="Incidents" value={totals.incidents} className="col-span-2 sm:col-span-1"
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            <StatTile label="Incidents" value={totals.incidents} dark className="col-span-2 sm:col-span-1"
               {...tileProps(incidentSelection(null))}
-              note={totals.not_predicted > 0 && (
-                <button type="button" className="link relative z-10 mt-0.5 text-xs"
+              note={totals.not_predicted > 0 ? (
+                <button type="button" className="relative z-20 font-medium text-white underline-offset-2 hover:underline"
                   aria-pressed={selection?.id === incidentSelection('not_predicted').id}
                   onClick={() => setSelection(incidentSelection('not_predicted'))}>
                   {totals.not_predicted} not predicted
                 </button>
-              )} />
+              ) : `In the last ${days} days`} />
             <StatTile label="High risk" value={totals.High} color={RISK_COLORS.High}
-              {...tileProps(incidentSelection('High'))} />
+              note={share(totals.High, totals)} {...tileProps(incidentSelection('High'))} />
             <StatTile label="Medium risk" value={totals.Medium} color={RISK_COLORS.Medium}
-              {...tileProps(incidentSelection('Medium'))} />
+              note={share(totals.Medium, totals)} {...tileProps(incidentSelection('Medium'))} />
             <StatTile label="Low risk" value={totals.Low} color={RISK_COLORS.Low}
-              {...tileProps(incidentSelection('Low'))} />
-            <StatTile label="Open tasks" value={totals.open_tasks} {...tileProps(OPEN_TASKS)} />
+              note={share(totals.Low, totals)} {...tileProps(incidentSelection('Low'))} />
+            <StatTile label="Open tasks" value={totals.open_tasks} note="Not yet complete"
+              {...tileProps(OPEN_TASKS)} />
           </div>
 
           {selection && <DrillDownPanel selection={selection} days={days} onClose={() => setSelection(null)} />}
 
           {totals.incidents === 0 ? (
-            <div className="card">
-              <p className="py-6 text-center text-sm text-slate-500">No incidents logged in the last {days} days.</p>
+            <div className="bento p-10">
+              <p className="text-center text-sm text-slate-500 dark:text-neutral-400">No incidents logged in the last {days} days.</p>
             </div>
           ) : (
             <>
@@ -141,7 +189,7 @@ export default function DashboardPage() {
                   onSelect={selectRow} />
               </ChartCard>
 
-              <div className="grid gap-6 lg:grid-cols-2">
+              <div className="grid gap-4 lg:grid-cols-2">
                 <ChartCard title="Risk mix">
                   <RiskDonut byRisk={summary.by_risk} onSelect={(risk) => setSelection(incidentSelection(risk))} />
                 </ChartCard>
@@ -154,7 +202,7 @@ export default function DashboardPage() {
                 </ChartCard>
               </div>
 
-              <div className="grid gap-6 lg:grid-cols-3">
+              <div className="grid gap-4 lg:grid-cols-3">
                 <ChartCard
                   title="By department"
                   className="lg:col-span-2"
@@ -164,8 +212,11 @@ export default function DashboardPage() {
                   <StackedRiskBars rows={summary.by_department} categoryKey="department" horizontal
                     onSelect={selectRow} />
                 </ChartCard>
-                <section className="card min-w-0 self-start" aria-label="Recent High risk incidents">
-                  <h2 className="section-title mb-4">Recent High risk</h2>
+                <section className="bento min-w-0 self-start p-5 sm:p-6" aria-label="Recent High risk incidents">
+                  <div className="mb-5 flex items-center justify-between gap-2">
+                    <h2 className="text-lg font-semibold tracking-tight text-ink dark:text-white">Recent High risk</h2>
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: RISK_COLORS.High }} aria-hidden="true" />
+                  </div>
                   <Timeline
                     empty={`No High risk incidents in the last ${days} days.`}
                     items={summary.recent_high.map((i) => ({
