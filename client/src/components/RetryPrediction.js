@@ -21,7 +21,7 @@ export default function RetryPrediction({ incidentId, reason, canRetry, onPredic
   }
 
   return (
-    <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200" role="status">
       <p className="font-medium">The incident was saved, but it has no risk prediction yet.</p>
       <p className="mt-1">{error || reason || 'The risk prediction service could not be reached.'}</p>
       {canRetry && (

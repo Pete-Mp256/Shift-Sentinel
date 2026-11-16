@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api, { apiError } from '../api';
 import DrillDownPanel from '../components/DrillDownPanel';
-import { PlaneIcon } from '../components/Icons';
+import PageHeader from '../components/PageHeader';
 import {
   ChartCard, RISK_COLORS, RiskDonut, RiskTable, StackedRiskBars,
 } from '../components/RiskCharts';
@@ -112,25 +112,14 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-4">
-      {/* Hero: framed panel with the title and the time range, like the landing page. */}
-      <section className="panel px-6 py-8 sm:px-10 sm:py-10">
-        <PlaneIcon aria-hidden="true" strokeWidth="0.6"
-          className="pointer-events-none absolute -right-16 -top-10 h-80 w-80 -rotate-12 text-black/[0.04] dark:text-white/[0.05]" />
-        <div className="relative flex flex-wrap items-end justify-between gap-6">
-          <div className="min-w-0">
-            <span className="eyebrow">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-600" /> Risk overview · last {days} days
-            </span>
-            <h1 className="mt-4 text-5xl font-extrabold leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl dark:text-white">
-              Dashboard
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-500 sm:text-base dark:text-neutral-400">
-              {summary
-                ? `Incidents from ${formatDate(summary.from)} to ${formatDate(summary.to)}, counted by their latest risk prediction. Click any number to see what's behind it.`
-                : 'Incidents counted by their latest risk prediction.'}
-            </p>
-          </div>
-          <div className="nav-pill gap-0.5 px-1" role="tablist" aria-label="Time range">
+      <PageHeader
+        eyebrow={`Risk overview · last ${days} days`}
+        title="Dashboard"
+        subtitle={summary
+          ? `Incidents from ${formatDate(summary.from)} to ${formatDate(summary.to)}, counted by their latest risk prediction. Click any number to see what's behind it.`
+          : 'Incidents counted by their latest risk prediction.'}
+        actions={(
+          <div className="segmented" role="tablist" aria-label="Time range">
             {RANGES.map((d) => (
               <button key={d} type="button" role="tab" aria-selected={days === d}
                 className={days === d ? 'pill-active' : 'pill'} onClick={() => setDays(d)}>
@@ -138,8 +127,8 @@ export default function DashboardPage() {
               </button>
             ))}
           </div>
-        </div>
-      </section>
+        )}
+      />
 
       {error && <p className="alert-error" role="alert">{error}</p>}
 

@@ -30,12 +30,12 @@ export default function HandoversPage() {
   const waiting = box === 'incoming' && handovers ? handovers.filter((h) => h.status === 'Submitted').length : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Handovers"
         subtitle="Tick off what you have taken over, then acknowledge the handover."
         actions={(
-          <div className="flex gap-1 rounded-full bg-white p-1 ring-1 ring-slate-200" role="tablist" aria-label="Handovers">
+          <div className="segmented" role="tablist" aria-label="Handovers">
             {TABS.map((t) => (
               <button key={t.box} type="button" role="tab" aria-selected={box === t.box}
                 className={box === t.box ? 'pill-active' : 'pill'} onClick={() => setParams({ box: t.box })}>
@@ -51,14 +51,14 @@ export default function HandoversPage() {
       <section className="card">
         <h2 className="section-title">
           {tab.label}{' '}
-          <span className="text-sm font-normal text-slate-500">
+          <span className="text-sm font-normal text-slate-500 dark:text-neutral-400">
             {handovers && (box === 'incoming' ? `(${waiting} waiting)` : `(${handovers.length})`)}
           </span>
         </h2>
         {!handovers ? (
-          !error && <p className="mt-3 text-sm text-slate-500">Loading handovers…</p>
+          !error && <p className="mt-3 text-sm text-slate-500 dark:text-neutral-400">Loading handovers…</p>
         ) : handovers.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-500">{tab.empty}</p>
+          <p className="mt-3 text-sm text-slate-500 dark:text-neutral-400">{tab.empty}</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {handovers.map((h) => (
@@ -67,12 +67,12 @@ export default function HandoversPage() {
                   className="tile flex flex-wrap items-start justify-between gap-3 transition hover:ring-accent-300">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{h.shift_type} shift · {formatDate(h.shift_date)}</p>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-neutral-400">
                       {box === 'incoming'
                         ? `From ${h.from_manager_name}`
                         : `To ${h.to_manager_name || `everyone in ${h.department_name}`}`} · {h.department_name}
                     </p>
-                    {h.summary && <p className="mt-1 line-clamp-2 text-sm text-slate-500">{h.summary}</p>}
+                    {h.summary && <p className="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-neutral-400">{h.summary}</p>}
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <span className="flex flex-wrap items-center justify-end gap-2">
@@ -80,11 +80,11 @@ export default function HandoversPage() {
                       <HandoverStatusBadge status={h.status} />
                     </span>
                     {h.status === 'Submitted' && h.high_items_unticked > 0 && (
-                      <span className="text-xs font-medium text-risk-high-ink">
+                      <span className="text-xs font-medium text-risk-high-ink dark:text-orange-400">
                         {h.high_items_unticked} High item{h.high_items_unticked === 1 ? '' : 's'} to acknowledge
                       </span>
                     )}
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-neutral-400">
                       {h.submitted_at ? `Submitted ${formatDateTime(h.submitted_at)}` : `Started ${formatDateTime(h.created_at)}`}
                     </span>
                   </div>

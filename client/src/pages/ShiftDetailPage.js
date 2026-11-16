@@ -74,13 +74,13 @@ export default function ShiftDetailPage() {
       </div>
     );
   }
-  if (!data) return <p className="text-sm text-slate-500">Loading shift…</p>;
+  if (!data) return <p className="text-sm text-slate-500 dark:text-neutral-400">Loading shift…</p>;
 
   const { shift, tasks, incidents, carried_tasks: carriedTasks = [] } = data;
   const isOwner = shift.manager_id === manager.manager_id;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         back={<Link to="/shifts" className="link mb-2 inline-block text-sm">← All shifts</Link>}
         eyebrow={`${formatDate(shift.shift_date)} · ${shift.department_name}`}
@@ -91,7 +91,7 @@ export default function ShiftDetailPage() {
               {formatTime(shift.start_time)}–{formatTime(shift.end_time)} · {shift.manager_name} · {shift.staff_count} staff
             </span>
             {!isOwner && (
-              <span className="rounded-full bg-slate-100 px-3 py-0.5 text-xs text-slate-600">
+              <span className="rounded-full bg-white/70 px-3 py-0.5 text-xs text-slate-600 dark:text-neutral-400 ring-1 ring-black/5 dark:bg-white/5 dark:text-neutral-400 dark:ring-white/10">
                 Read-only: this shift belongs to {shift.manager_name}
               </span>
             )}
@@ -99,8 +99,8 @@ export default function ShiftDetailPage() {
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="min-w-0 space-y-6 lg:col-span-2">
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="min-w-0 space-y-4 lg:col-span-2">
           <IncidentList
             incidents={incidents}
             action={isOwner && !logging && (
@@ -121,7 +121,7 @@ export default function ShiftDetailPage() {
           />
         </div>
 
-        <aside className="min-w-0 space-y-6">
+        <aside className="min-w-0 space-y-4">
           <section className="card">
             <h2 className="section-title mb-4">Handover timeline</h2>
             <Timeline items={handoverTimeline(shift, tasks, incidents)} />

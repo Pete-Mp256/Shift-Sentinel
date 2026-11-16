@@ -128,7 +128,7 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
         {error && <p className="alert-error" role="alert">{error}</p>}
         {isOwner ? (
           <>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-neutral-400">
               Start the handover to pass this shift&apos;s open tasks, incidents and your notes to the next person on duty.
             </p>
             <button type="button" className="btn-primary" onClick={start} disabled={busy}>
@@ -136,7 +136,7 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
             </button>
           </>
         ) : (
-          <p className="text-sm text-slate-500">No handover started for this shift yet.</p>
+          <p className="text-sm text-slate-500 dark:text-neutral-400">No handover started for this shift yet.</p>
         )}
       </section>
     );
@@ -146,7 +146,7 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
     return (
       <section className="card space-y-2">
         {heading}
-        <p className="text-sm text-slate-500">Only the sender, the incoming person and the shift&apos;s department can see this handover.</p>
+        <p className="text-sm text-slate-500 dark:text-neutral-400">Only the sender, the incoming person and the shift&apos;s department can see this handover.</p>
       </section>
     );
   }
@@ -155,7 +155,7 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
     return (
       <section className="card space-y-2">
         {heading}
-        {error ? <p className="alert-error" role="alert">{error}</p> : <p className="text-sm text-slate-500">Loading handover…</p>}
+        {error ? <p className="alert-error" role="alert">{error}</p> : <p className="text-sm text-slate-500 dark:text-neutral-400">Loading handover…</p>}
       </section>
     );
   }
@@ -192,13 +192,13 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
           <button type="submit" className="btn-secondary shrink-0 px-4" disabled={busy || !note.trim()}>Add</button>
         </form>
 
-        <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
+        <div className="flex flex-wrap gap-2 border-t border-black/5 pt-4 dark:border-white/10">
           <button type="button" className="btn-primary" onClick={submit} disabled={busy}>
             {busy ? 'Working…' : 'Submit handover'}
           </button>
           <button type="button" className="btn-secondary" onClick={save} disabled={busy || !dirty}>Save draft</button>
         </div>
-        <p className="text-xs text-slate-500">After you submit, the handover can no longer be changed.</p>
+        <p className="text-xs text-slate-500 dark:text-neutral-400">After you submit, the handover can no longer be changed.</p>
       </section>
     );
   }
@@ -208,20 +208,20 @@ export default function HandoverPanel({ shift, isOwner, onChanged }) {
       {heading}
       {error && <p className="alert-error" role="alert">{error}</p>}
       <dl className="grid gap-1 text-sm">
-        <div><dt className="inline text-slate-500">From: </dt><dd className="inline">{handover.from_manager_name}</dd></div>
-        <div><dt className="inline text-slate-500">To: </dt><dd className="inline">{recipientName(handover)}</dd></div>
+        <div><dt className="inline text-slate-500 dark:text-neutral-400">From: </dt><dd className="inline">{handover.from_manager_name}</dd></div>
+        <div><dt className="inline text-slate-500 dark:text-neutral-400">To: </dt><dd className="inline">{recipientName(handover)}</dd></div>
         {handover.submitted_at && (
-          <div><dt className="inline text-slate-500">Submitted: </dt><dd className="inline">{formatDateTime(handover.submitted_at)}</dd></div>
+          <div><dt className="inline text-slate-500 dark:text-neutral-400">Submitted: </dt><dd className="inline">{formatDateTime(handover.submitted_at)}</dd></div>
         )}
         {handover.acknowledged_at && (
-          <div><dt className="inline text-slate-500">Acknowledged: </dt><dd className="inline">{formatDateTime(handover.acknowledged_at)}</dd></div>
+          <div><dt className="inline text-slate-500 dark:text-neutral-400">Acknowledged: </dt><dd className="inline">{formatDateTime(handover.acknowledged_at)}</dd></div>
         )}
       </dl>
       {handover.status === 'Draft' ? (
-        <p className="text-sm text-slate-500">{handover.from_manager_name} is still preparing this handover.</p>
+        <p className="text-sm text-slate-500 dark:text-neutral-400">{handover.from_manager_name} is still preparing this handover.</p>
       ) : (
         <>
-          <p className="whitespace-pre-line text-sm text-slate-700">{handover.summary}</p>
+          <p className="whitespace-pre-line text-sm text-slate-700 dark:text-neutral-300">{handover.summary}</p>
           <HandoverItems items={items} />
           <Link to={`/handovers/${handover.handover_id}`} className="link inline-block text-sm">Open handover →</Link>
         </>

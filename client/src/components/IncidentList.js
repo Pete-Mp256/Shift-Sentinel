@@ -14,14 +14,14 @@ export default function IncidentList({ incidents, action, children }) {
     <section className="card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="section-title">
-          Incidents <span className="text-sm font-normal normal-case tracking-normal text-slate-500">({incidents.length})</span>
+          Incidents <span className="text-sm font-normal normal-case tracking-normal text-slate-500 dark:text-neutral-400">({incidents.length})</span>
         </h2>
         {action}
       </div>
       {children && <div className="mt-3">{children}</div>}
 
       {sorted.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-500">No incidents logged on this shift.</p>
+        <p className="mt-3 text-sm text-slate-500 dark:text-neutral-400">No incidents logged on this shift.</p>
       ) : (
         <ul className="mt-3 space-y-2">
           {sorted.map((i) => (
@@ -29,8 +29,8 @@ export default function IncidentList({ incidents, action, children }) {
               <Link to={`/incidents/${i.incident_id}`} className="tile flex flex-wrap items-start justify-between gap-3 transition hover:ring-accent-300">
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">{i.incident_type}</p>
-                  <p className="text-sm text-slate-600">{i.description}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="text-sm text-slate-600 dark:text-neutral-400">{i.description}</p>
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-neutral-400">
                     {formatDateTime(i.occurred_at)} · task {i.task_status.toLowerCase()}
                   </p>
                 </div>

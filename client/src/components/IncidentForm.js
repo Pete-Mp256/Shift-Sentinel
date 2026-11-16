@@ -81,7 +81,7 @@ export default function IncidentForm({ shift, tasks, carriedTasks = [], onLogged
       <div className="space-y-4 tile">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="section-title">Incident logged: {incident.incident_type}</h3>
-          <Link to={`/incidents/${incident.incident_id}`} className="text-sm text-accent-700 hover:underline">
+          <Link to={`/incidents/${incident.incident_id}`} className="text-sm text-accent-700 dark:text-accent-400 hover:underline">
             Open incident
           </Link>
         </div>
@@ -174,8 +174,8 @@ export default function IncidentForm({ shift, tasks, carriedTasks = [], onLogged
       </div>
 
       <fieldset>
-        <legend className="text-sm font-semibold text-slate-700">Readings used by the risk model</legend>
-        <p className="text-xs text-slate-500">Shift type ({shift.shift_type}) is taken from this shift.</p>
+        <legend className="text-sm font-semibold text-slate-700 dark:text-neutral-300">Readings used by the risk model</legend>
+        <p className="text-xs text-slate-500 dark:text-neutral-400">Shift type ({shift.shift_type}) is taken from this shift.</p>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {NUMERIC_FEATURES.map((f) => (
             <div key={f.name}>
@@ -185,7 +185,7 @@ export default function IncidentForm({ shift, tasks, carriedTasks = [], onLogged
                 aria-describedby={`${f.name}-hint`} />
               {errors[f.name]
                 ? <p className="field-error">{errors[f.name]}</p>
-                : <p id={`${f.name}-hint`} className="mt-1 text-xs text-slate-500">{f.hint}</p>}
+                : <p id={`${f.name}-hint`} className="mt-1 text-xs text-slate-500 dark:text-neutral-400">{f.hint}</p>}
             </div>
           ))}
         </div>

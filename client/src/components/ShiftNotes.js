@@ -65,9 +65,9 @@ export default function ShiftNotes({ shift, canEdit, onSaved }) {
         {canEdit && <button type="button" className="btn-secondary px-3 py-1.5" onClick={startEdit}>Edit</button>}
       </div>
       {shift.notes ? (
-        <p className="mt-2 whitespace-pre-line text-sm text-slate-700">{shift.notes}</p>
+        <p className="mt-2 whitespace-pre-line text-sm text-slate-700 dark:text-neutral-300">{shift.notes}</p>
       ) : (
-        <p className="mt-2 text-sm text-slate-500">No notes yet.</p>
+        <p className="mt-2 text-sm text-slate-500 dark:text-neutral-400">No notes yet.</p>
       )}
     </section>
   );

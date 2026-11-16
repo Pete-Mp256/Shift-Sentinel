@@ -76,19 +76,23 @@
     @apply h-2 w-full;
     background: linear-gradient(104deg, theme('colors.accent.600') 0 62%, #fff 62% 63.5%, theme('colors.accent.600') 63.5% 66%, #fff 66% 67.5%, theme('colors.accent.700') 67.5%);
   }
-  /* Light grey panel inside the shell. */
+  /* A section of a signed-in page: a white bento card (same look as the landing page cards). */
   .card {
-    @apply rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200/70 sm:p-5 dark:bg-[#161616] dark:ring-white/10;
+    @apply rounded-3xl bg-white p-5 text-ink ring-1 ring-black/5 sm:p-6 dark:bg-[#111111] dark:text-neutral-100 dark:ring-white/10;
   }
-  /* White tile inside a card. */
+  /* A soft grey row or block inside a card. */
   .tile {
-    @apply rounded-xl bg-white p-3 shadow-sm sm:p-4 ring-1 ring-slate-200/60 dark:bg-[#1f1f1f] dark:shadow-none dark:ring-white/10;
+    @apply rounded-2xl bg-[#f4f4f6] p-3 ring-1 ring-black/5 sm:p-4 dark:bg-white/5 dark:ring-white/10;
   }
   .page-title {
-    @apply text-3xl font-semibold tracking-tight text-ink sm:text-4xl dark:text-white;
+    @apply text-4xl font-extrabold leading-[0.95] tracking-[-0.045em] text-ink sm:text-5xl dark:text-white;
   }
   .section-title {
-    @apply text-base font-semibold text-ink dark:text-white;
+    @apply text-lg font-semibold tracking-tight text-ink dark:text-white;
+  }
+  /* A group of pill tabs (time range, shift type, incoming/sent). */
+  .segmented {
+    @apply nav-pill gap-0.5 px-1;
   }
   .label {
     @apply mb-1 block text-xs font-medium text-slate-500 dark:text-neutral-400;
