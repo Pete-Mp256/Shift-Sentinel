@@ -1,6 +1,7 @@
 # Pin scikit-learn, xgboost, imbalanced-learn and pandas to the exact versions
 # printed in model/model_meta.json ("versions"), or the .pkl may fail to load.
 flask
+gunicorn
 joblib
 numpy
 pandas==2.2.3

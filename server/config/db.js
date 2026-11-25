@@ -6,13 +6,22 @@ types.setTypeParser(types.builtins.DATE, (value) => value);
 // NUMERIC -> number (values here are small: scores, temperatures, hours).
 types.setTypeParser(types.builtins.NUMERIC, (value) => (value === null ? null : parseFloat(value)));
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || 5432,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+// Hosted databases (Neon, Render) give one DATABASE_URL and need SSL; local development uses the DB_* values.
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.DB_SSL === 'false' ? false : { rejectUnauthorized: false },
+        max: 5,
+      }
+    : {
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT) || 5432,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+      }
+);
 
 pool.on('error', (err) => {
   console.error('Unexpected PostgreSQL pool error:', err);

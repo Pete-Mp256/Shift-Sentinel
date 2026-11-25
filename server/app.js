@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
@@ -28,6 +30,14 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/handovers', handoverRoutes);
 app.use('/api/managers', managerRoutes);
+
+// In production the built React app (client/build) is served from this same server,
+// so the site and the API share one address and the client's relative /api calls just work.
+const CLIENT_BUILD = path.join(__dirname, '..', 'client', 'build');
+if (fs.existsSync(path.join(CLIENT_BUILD, 'index.html'))) {
+  app.use(express.static(CLIENT_BUILD));
+  app.get(/^(?!\/api\/).*/, (req, res) => res.sendFile(path.join(CLIENT_BUILD, 'index.html')));
+}
 
 // Unknown routes
 app.use((req, res) => {

@@ -1,0 +1,68 @@
+# Render Blueprint: deploys Shift-Sentinel as two free web services.
+# The database is a free Neon PostgreSQL project (Render's free database expires after 30 days).
+# In Render: New > Blueprint > pick this repo, then fill in the values marked sync: false.
+services:
+  # Python prediction service (ml/app.py). The model is downloaded at build time from MODEL_BASE_URL.
+  - type: web
+    name: shift-sentinel-ml
+    runtime: python
+    plan: free
+    rootDir: ml
+    buildCommand: pip install -r requirements.txt && python fetch_model.py
+    startCommand: gunicorn app:app --workers 1 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: MODEL_BASE_URL
+        sync: false
+
+  # Node API + the built React app, served from one address.
+  - type: web
+    name: shift-sentinel
+    runtime: node
+    plan: free
+    buildCommand: cd client && npm install --no-audit --no-fund && CI=false npm run build && cd ../server && npm ci --omit=dev
+    startCommand: cd server && node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URL          # Neon connection string (postgresql://...?sslmode=require)
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ML_SERVICE_URL        # e.g. https://shift-sentinel-ml.onrender.com
+        sync: false
+      - key: ML_TIMEOUT_MS         # the ML service can take ~60 s to wake from sleep
+        value: "12000"
+      - key: ML_KEEPALIVE
+        value: "true"
+      - key: ML_MODEL_VERSION
+        value: xgb-no-dept
+      - key: APP_URL               # this service's own address, used in email links
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: REACT_APP_GOOGLE_CLIENT_ID   # same value as GOOGLE_CLIENT_ID; read when the client is built
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: ESCALATION_EMAIL
+        sync: false
+      - key: ESCALATION_MINUTES
+        value: "30"
+      - key: JOBS_ENABLED
+        value: "true"
+      - key: APP_TIMEZONE
+        value: Africa/Nairobi
+      - key: REMINDER_LEAD_MINUTES
+        value: "60"

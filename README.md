@@ -186,6 +186,27 @@ npm install
 npm start                      # http://localhost:3000, proxies API calls to :5000
 ```
 
+## Deploying Online (free tiers)
+
+The live system runs on two free [Render](https://render.com) web services and a free [Neon](https://neon.tech) PostgreSQL database. `render.yaml` describes both services.
+
+| Part | Host | Notes |
+|---|---|---|
+| React client + Node API | Render web service `shift-sentinel` | Express serves `client/build`, so the site and `/api` share one address |
+| Prediction service (`ml/app.py`) | Render web service `shift-sentinel-ml` | gunicorn, 1 worker; model files downloaded at build time |
+| Database | Neon PostgreSQL | `DATABASE_URL`, SSL on |
+
+1. **Model files.** The model stays out of git. Create a GitHub release (e.g. tag `model-v1`) and attach `xgb_pipeline.pkl` and `model_meta.json` from `ml/model/`. Its download folder, `https://github.com/Pete-Mp256/Shift-Sentinel/releases/download/model-v1`, is `MODEL_BASE_URL`.
+2. **Database.** Create a Neon project, copy its connection string, then load the schema and demo data once (this drops existing tables):
+   ```bash
+   cd server
+   DATABASE_URL="postgresql://...?sslmode=require" npm run db:init
+   ```
+3. **Services.** In Render choose New > Blueprint, pick this repository and fill in the values `render.yaml` marks `sync: false` (`DATABASE_URL`, `MODEL_BASE_URL`, `ML_SERVICE_URL`, `APP_URL`, Google client ID, SMTP settings).
+4. **Google sign-in.** Add the Render address to the OAuth client's Authorised JavaScript origins in Google Cloud Console.
+
+Free services sleep after 15 minutes without visits and take about a minute to wake, so open the site a minute before a demo. While the API is awake it pings the ML service every 10 minutes (`ML_KEEPALIVE=true`) so predictions stay fast. Email jobs only run while the API is awake.
+
 ## API Overview
 
 All `/api` routes except `/api/health` and the auth routes need an `Authorization: Bearer <token>` header ([server/middleware/auth.js](server/middleware/auth.js)).
