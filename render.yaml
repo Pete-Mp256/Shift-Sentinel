@@ -7,6 +7,7 @@ services:
     name: shift-sentinel-ml
     runtime: python
     plan: free
+    region: ohio
     rootDir: ml
     buildCommand: pip install -r requirements.txt && python fetch_model.py
     startCommand: gunicorn app:app --workers 1 --timeout 120 --bind 0.0.0.0:$PORT
@@ -22,6 +23,7 @@ services:
     name: shift-sentinel
     runtime: node
     plan: free
+    region: ohio
     buildCommand: cd client && npm install --no-audit --no-fund && CI=false npm run build && cd ../server && npm ci --omit=dev
     startCommand: cd server && node server.js
     healthCheckPath: /api/health
